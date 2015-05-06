@@ -22,6 +22,7 @@ class CoffeeDataProvider {
         location: CLLocation,
         completion:(coffeeData: [CoffeePlace]?, errorMessage: String?) -> Void)
     {
+        // that's a value that could potentially be configured via UI.
         let radius = 5000
         
         // cache current location
@@ -47,6 +48,9 @@ class CoffeeDataProvider {
                     coffeePlaces.append(CoffeePlace(placeDict: place))
                 }
             }
+            
+            // sort fetched array to have the nearest location on top.
+            coffeePlaces.sort({$0.distanceFrom(location: self.currentLocation!) < $1.distanceFrom(location: self.currentLocation!)})
             
             completion(coffeeData: coffeePlaces, errorMessage: nil)
         })

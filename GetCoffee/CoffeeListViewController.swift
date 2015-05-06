@@ -73,7 +73,7 @@ extension CoffeeListViewController: UITableViewDelegate, UITableViewDataSource {
         let coffeePlace = coffeePlaces[indexPath.row]
         
         cell.addressLabel.text = coffeePlace.placeVicinity
-        cell.distanceLabel.text = "\(coffeePlace.distanceFrom(location: coffeeDataProvider.currentLocation!))"
+        cell.distanceLabel.text = "\(coffeePlace.distanceFromPresentation(location: coffeeDataProvider.currentLocation!))"
         cell.hoursLabel.text = coffeePlace.openingHours()
         
         return cell

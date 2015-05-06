@@ -48,9 +48,13 @@ class CoffeePlace {
 //        }
     }
     
-    func distanceFrom(#location: CLLocation) -> String {
-        let distance = placeLocation.distanceFromLocation(location) * 0.000621371 // in miles
+    func distanceFromPresentation(#location: CLLocation) -> String {
+        let distance = self.distanceFrom(location: location) * 0.000621371 // in miles
         return String(format: "%.1f mi", distance)
+    }
+    
+    func distanceFrom(#location: CLLocation) -> CLLocationDistance {
+        return placeLocation.distanceFromLocation(location)
     }
     
     func openingHours() -> String {
