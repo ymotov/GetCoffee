@@ -9,16 +9,18 @@
 import UIKit
 
 class CoffeeListViewController: UIViewController {
-
+    
     let mapViewSegueIdentifier = "mapViewSegue"
     
     let locationManager = CLLocationManager()
     let coffeeDataProvider = CoffeeDataProvider()
+    let refreshControl = UIRefreshControl()
     
+    // coffee places fetched from google maps
     var coffeePlaces = [CoffeePlace]()
-    var selectedCoffeePlace: CoffeePlace?
     
-    var refreshControl: UIRefreshControl!
+    // coffee place selected and passed to the map view controller
+    var selectedCoffeePlace: CoffeePlace?
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -38,7 +40,6 @@ class CoffeeListViewController: UIViewController {
     func customizeUI() {
         self.navigationItem.title = "Coffee Places"
         
-        self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         self.refreshControl.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
         self.tableView.addSubview(refreshControl)
@@ -108,19 +109,18 @@ extension CoffeeListViewController: CLLocationManagerDelegate {
     func retrieveCoffeeData(#location: CLLocation) {
         coffeeDataProvider.fetchCoffeePlacesNearLocation(location) { (coffeeData, errorMessage) -> Void in
             
-            if let coffeeData = coffeeData {
-                self.coffeePlaces = coffeeData
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+
+                if self.refreshControl.refreshing {
+                    self.refreshControl.endRefreshing()
+                }
                 
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    
-                    if self.refreshControl.refreshing {
-                        self.refreshControl.endRefreshing()
-                    }
+                if let coffeeData = coffeeData {
+                    self.coffeePlaces = coffeeData
                     
                     self.tableView.reloadData()
-                })
-                
-            }
+                }
+            })
         }
     }
     
